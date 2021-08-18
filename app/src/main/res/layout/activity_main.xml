@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2196F3"
+    android:padding="10dp"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:background="#003933"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="Nhận dạng chữ viết tay"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="22dp" />
+            <ImageView
+                android:id="@+id/img"
+                android:layout_marginTop="30px"
+                android:layout_width="match_parent"
+                android:background="#017167"
+                android:layout_height="350px"/>
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/camera"
+                    android:layout_gravity="center"
+                    android:text="Chụp ảnh"
+                    android:textAllCaps="false"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="10px"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/gallery"
+                    android:layout_gravity="center"
+                    android:text="Chọn ảnh"
+                    android:textAllCaps="false"
+                    android:layout_marginLeft="10px"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <Button
+                android:id="@+id/btnPredict"
+                android:layout_marginBottom="30dp"
+                android:layout_gravity="center"
+                android:text="Dự đoán"
+                android:textAllCaps="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:text="Convolutional Neural Network(CNN):"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/txtCNN"
+                    android:paddingLeft="5dp"
+                    android:textSize="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/white"
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:text="Độ chính xác:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingLeft="5dp"
+                    android:textSize="30dp"
+                    android:textColor="#29E630"
+                    android:text="85%"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="50px"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:text="Suport Vector Machine(SVM):"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:visibility="visible"
+                    android:id="@+id/txtSVM"
+                    android:paddingLeft="5dp"
+                    android:textSize="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/white"
+                    android:text=""
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <ProgressBar
+                    android:visibility="gone"
+                    android:id="@+id/progress_circular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"/>
+                <TextView
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:text="Độ chính xác:"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:paddingLeft="5dp"
+                    android:textSize="30dp"
+                    android:textColor="#29E630"
+                    android:text="75%"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
