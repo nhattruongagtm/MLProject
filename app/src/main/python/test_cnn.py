@@ -1,47 +1,35 @@
+
+
 def main(file):
 
     import tensorflow as tf
-#     from tensorflow.keras.models import load_model
-# #    // from keras.models import load_model
-#     from tensorflow.keras.models import model_from_json
-
-
+    from tensorflow.keras.models import model_from_json
+    from tensorflow.keras.models import load_model
     from os.path import dirname, join
-#     m_json = join(dirname(__file__), "model.json")
-#      m_json = join(dirname(__file__), "model.json")
-
-     m_json = join(dirname(__file__), "saved_modegl.json")
-#      model = tf.keras.models.load_model(m_json)
-
-#     json_file = open(m_json, 'r')
-#     loaded_model_json = json_file.read()
-#     json_file.close()
-#     loaded_model = model_from_json(loaded_model_json)
-#
-#
-#     m_model = join(dirname(__file__), "model.h5")
-#     loaded_model = load_weights(m_model)
-#
-#     model = loaded_model
-
-#     m_model = join(dirname(__file__), "train_cnn.h5")
-#     model = load_model(m_model)
-
-
-
-    print('Model successfully loaded')
-
     import cv2
     import numpy as np
     from matplotlib import pyplot as plt
 
+    m_json = join(dirname(__file__), "model4.json")
+    json_file = open(m_json, 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+
+    mModel = join(dirname(__file__), "model4.h5")
+    loaded_model.load_weights(mModel);
+
+    model = loaded_model
+
+    print('Model successfully loaded')
 
     characters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
                   'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
                   'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
     # enter input image here
-    image = cv2.imread(file)
+    img = join(dirname(__file__), file)
+    image = cv2.imread(img)
     height, width, depth = image.shape
 
     # resizing the image to find spaces better

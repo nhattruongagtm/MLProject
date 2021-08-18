@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private String path = null;
     private Python py;
     private PyObject pyObject,pyObjectCNN;
-    private ProgressBar progressBar;
+    private ProgressBar progressBar_svm,progressBar_cnn;
 
 
     @Override
@@ -66,16 +66,12 @@ public class MainActivity extends AppCompatActivity {
         if(!Python.isStarted()){
                 Python.start(new AndroidPlatform(this));
             }
+
         // tạo instance
         py = Python.getInstance();
         // tạo obj gọi đến tên file
         pyObject = py.getModule("test_svm");
-//        pyObjectCNN = py.getModule("test_cnn");
-
-//        PyObject obj_cnn = pyObjectCNN.callAttr("main","example.png");
-//        txtCNN.setText(obj_cnn.toString());
-
-
+        pyObjectCNN = py.getModule("test_cnn");
 
 
         // mở thư viện ảnh
@@ -123,8 +119,15 @@ public class MainActivity extends AppCompatActivity {
 //                    txtSVM.setText(obj.toString());
 ////                    txtCNN.setText(obj_cnn.toString());
 //                }
+
+                // dự đoán cnn
+                new CNNAsynTask().execute();
+
+
                 // dự đoán svm
                 new SVMAsynTask().execute();
+
+
 
             }
         });
@@ -190,18 +193,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void maping(){
-//        txt = findViewById(R.id.txt);
-//        n1 = findViewById(R.id.n1);
-//        n2 = findViewById(R.id.n2);
-//        btnResult = findViewById(R.id.btnResult);
-//        btnSelectImg = findViewById(R.id.selectImg);
         imageView = findViewById(R.id.img);
         btnCamera = findViewById(R.id.camera);
         btnGallery = findViewById(R.id.gallery);
         btnPredict = findViewById(R.id.btnPredict);
         txtCNN = findViewById(R.id.txtCNN);
         txtSVM = findViewById(R.id.txtSVM);
-        progressBar = findViewById(R.id.progress_circular);
+        progressBar_svm = findViewById(R.id.progress_circular);
+        progressBar_cnn = findViewById(R.id.progress_circular1);
     }
     private void openCamera(){
         ContentValues values = new ContentValues();
@@ -246,14 +245,40 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             txtSVM.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
+            progressBar_svm.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected void onPostExecute(String s) {
             txtSVM.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
+            progressBar_svm.setVisibility(View.GONE);
             txtSVM.setText(s);
+        }
+    }
+    private class CNNAsynTask extends AsyncTask<String,Void,String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String predict = "";
+
+            PyObject obj_cnn = pyObjectCNN.callAttr("main","example.png");
+
+            predict = obj_cnn.toString();
+
+            return predict;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            txtCNN.setVisibility(View.GONE);
+            progressBar_cnn.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            txtCNN.setVisibility(View.VISIBLE);
+            progressBar_cnn.setVisibility(View.GONE);
+            txtCNN.setText(s);
         }
     }
 }

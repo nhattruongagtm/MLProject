@@ -82,6 +82,11 @@
                     android:text=""
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
+                <ProgressBar
+                    android:visibility="gone"
+                    android:id="@+id/progress_circular1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"/>
                 <TextView
                     android:textSize="20dp"
                     android:textColor="@color/white"
@@ -94,7 +99,7 @@
                     android:paddingLeft="5dp"
                     android:textSize="30dp"
                     android:textColor="#29E630"
-                    android:text="85%"
+                    android:text="0%"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -137,7 +142,7 @@
                     android:paddingLeft="5dp"
                     android:textSize="30dp"
                     android:textColor="#29E630"
-                    android:text="75%"
+                    android:text="0%"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>

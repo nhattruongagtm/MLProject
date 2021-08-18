@@ -17,12 +17,7 @@ android {
 
         python {
             buildPython 'C:/Users/84168/miniconda3/python.exe'
-
-//            C:/Users/84168/AppData/Local/Programs/Python/Python38/python.exe
-//            buildPython 'C:/Users/84168/AppData/Local/Programs/Python/Python37/python.exe'
-
-
-
+            buildPython 'C:/Windows/py.exe', "-3.8"
 
             pip {
                 install 'numpy'
@@ -35,17 +30,9 @@ android {
 
                 install 'keras'
 
-//                install 'load'
-
                 install 'sklearn'
 
                 install 'tensorflow'
-
-
-//
-//                install 'tflite-runtime'
-
-
 
             }
 
