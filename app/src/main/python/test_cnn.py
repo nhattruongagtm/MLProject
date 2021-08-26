@@ -8,6 +8,9 @@ def main(file):
     from os.path import dirname, join
     import cv2
     import numpy as np
+    import base64
+    from PIL import Image
+    import io
     from matplotlib import pyplot as plt
 
     m_json = join(dirname(__file__), "model4.json")
@@ -17,7 +20,7 @@ def main(file):
     loaded_model = model_from_json(loaded_model_json)
 
     mModel = join(dirname(__file__), "model4.h5")
-    loaded_model.load_weights(mModel);
+    loaded_model.load_weights(mModel)
 
     model = loaded_model
 
@@ -28,8 +31,21 @@ def main(file):
                   'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
     # enter input image here
-    img = join(dirname(__file__), file)
-    image = cv2.imread(img)
+    decoded_data = base64.b64decode(file)
+    np_data = np.fromstring(decoded_data,np.uint8)
+    image = cv2.imdecode(np_data,cv2.IMREAD_UNCHANGED)
+    pil_im = Image.fromarray(image)
+
+    buff = io.BytesIO()
+    pil_im.save(buff,format="PNG")
+    img_str = base64.b64encode(buff.getvalue())
+#     print(""+str(img_str,'utf-8'))
+
+
+
+
+#     img = join(dirname(__file__), file)
+#     image = cv2.imread(img)
     height, width, depth = image.shape
 
     # resizing the image to find spaces better
@@ -87,10 +103,10 @@ def main(file):
     interp = 'bilinear'
     fig, axs = plt.subplots(nrows=len(sorted_ctrs), sharex=True, figsize=(1, len(sorted_ctrs)))
     for i in range(len(pchl)):
-        # print (pchl[i][0])
+#         # print (pchl[i][0])
         pcw.append(characters[pchl[i][0]])
-        axs[i].set_title('-------> predicted letter: ' + characters[pchl[i][0]], x=2.5, y=0.24)
-        axs[i].imshow(m[i], interpolation=interp)
+#         axs[i].set_title('-------> predicted letter: ' + characters[pchl[i][0]], x=2.5, y=0.24)
+#         axs[i].imshow(m[i], interpolation=interp)
 
     # plt.show()
 

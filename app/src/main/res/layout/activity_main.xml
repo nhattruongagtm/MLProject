@@ -30,27 +30,29 @@
                 android:layout_marginTop="30px"
                 android:layout_width="match_parent"
                 android:background="#017167"
-                android:layout_height="350px"/>
+                android:layout_height="450px"/>
             <LinearLayout
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <Button
-                    android:id="@+id/camera"
-                    android:layout_gravity="center"
-                    android:text="Chụp ảnh"
-                    android:textAllCaps="false"
-                    android:layout_width="wrap_content"
-                    android:layout_marginRight="10px"
-                    android:layout_height="wrap_content"/>
-                <Button
                     android:id="@+id/gallery"
                     android:layout_gravity="center"
                     android:text="Chọn ảnh"
+                    android:layout_weight="1"
                     android:textAllCaps="false"
-                    android:layout_marginLeft="10px"
+                    android:layout_marginRight="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/draw"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="Vẽ"
+                    android:textAllCaps="false"
+                    android:layout_marginLeft="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
@@ -59,93 +61,106 @@
                 android:layout_marginBottom="30dp"
                 android:layout_gravity="center"
                 android:text="Dự đoán"
+                android:padding="10dp"
                 android:textAllCaps="false"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <LinearLayout
+                android:id="@+id/result_predict"
+                android:visibility="visible"
+                android:layout_marginTop="25dp"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
-                    android:textSize="20dp"
-                    android:textColor="@color/white"
-                    android:text="Convolutional Neural Network(CNN):"
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:id="@+id/txtCNN"
-                    android:paddingLeft="5dp"
-                    android:textSize="30dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textColor="@color/white"
-                    android:text=""
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textSize="20dp"
+                        android:textColor="@color/white"
+                        android:text="Suport Vector Machine(SVM):"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/txtSVM"
+                        android:paddingLeft="5dp"
+                        android:textSize="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="@color/white"
+                        android:text=""
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <ProgressBar
+                        android:visibility="gone"
+                        android:id="@+id/progress_circular"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"/>
+                    <TextView
+                        android:textSize="20dp"
+                        android:textColor="@color/white"
+                        android:text="Độ chính xác:"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:paddingLeft="5dp"
+                        android:textSize="30dp"
+                        android:textColor="#29E630"
+                        android:text="0%"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginTop="50px"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <ProgressBar
-                    android:visibility="gone"
-                    android:id="@+id/progress_circular1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"/>
-                <TextView
-                    android:textSize="20dp"
-                    android:textColor="@color/white"
-                    android:text="Độ chính xác:"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:paddingLeft="5dp"
-                    android:textSize="30dp"
-                    android:textColor="#29E630"
-                    android:text="0%"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textSize="20dp"
+                        android:textColor="@color/white"
+                        android:text="Convolutional Neural Network(CNN):"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:visibility="visible"
+                        android:id="@+id/txtCNN"
+                        android:paddingLeft="5dp"
+                        android:textSize="30dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:textColor="@color/white"
+                        android:text=""
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <ProgressBar
+                        android:visibility="gone"
+                        android:id="@+id/progress_circular1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"/>
+                    <TextView
+                        android:textSize="20dp"
+                        android:textColor="@color/white"
+                        android:text="Độ chính xác:"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:paddingLeft="5dp"
+                        android:textSize="30dp"
+                        android:textColor="#29E630"
+                        android:text="0%"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="50px"
-                android:orientation="vertical"
+            <FrameLayout
+                android:id="@+id/framelayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:textSize="20dp"
-                    android:textColor="@color/white"
-                    android:text="Suport Vector Machine(SVM):"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:visibility="visible"
-                    android:id="@+id/txtSVM"
-                    android:paddingLeft="5dp"
-                    android:textSize="30dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textColor="@color/white"
-                    android:text=""
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <ProgressBar
-                    android:visibility="gone"
-                    android:id="@+id/progress_circular"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"/>
-                <TextView
-                    android:textSize="20dp"
-                    android:textColor="@color/white"
-                    android:text="Độ chính xác:"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:paddingLeft="5dp"
-                    android:textSize="30dp"
-                    android:textColor="#29E630"
-                    android:text="0%"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
     </ScrollView>

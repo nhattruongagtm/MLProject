@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#f234"
+    android:id="@+id/fragment_draw"
+    tools:context=".DrawActivity">
+    <LinearLayout
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_height="60dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:src="@drawable/undo"
+            android:id="@+id/undo"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_height="wrap_content"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:src="@drawable/redo"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/redo"
+            android:layout_marginRight="5dp"
+            android:layout_height="wrap_content"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:src="@drawable/delete"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/clear"
+            android:layout_height="wrap_content"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:src="@drawable/save"
+            android:id="@+id/save_img"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
+    <com.example.mlproject.PaintView
+        android:id="@+id/paintView"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/white" />
+    <LinearLayout
+        android:background="#f234"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <SeekBar
+                android:layout_weight="1"
+                android:id="@+id/stroke"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:src="@drawable/check"
+                android:id="@+id/ok_draw"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:layout_height="60dp"/>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="50dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="right|center_vertical"
+                android:layout_height="match_parent">
+                <TextView
+                    android:background="#f23"
+                    android:id="@+id/chooseColor"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

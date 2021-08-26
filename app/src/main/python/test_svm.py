@@ -1,5 +1,8 @@
-def main(file):
+from PIL import Image
+import base64
+import io
 
+def main(file):
     from os.path import dirname, join
     mModel = join(dirname(__file__), "mnist-svm.joblib")
     print('model',mModel)
@@ -19,9 +22,16 @@ def main(file):
                   'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 
     # enter input image here
-    img = join(dirname(__file__), file)
-    image = cv2.imread(img)
-    assert not isinstance(image,type(None)), 'image not found'
+    decoded_data = base64.b64decode(file)
+    np_data = np.fromstring(decoded_data,np.uint8)
+    image = cv2.imdecode(np_data,cv2.IMREAD_UNCHANGED)
+    pil_im = Image.fromarray(image)
+
+    buff = io.BytesIO()
+    pil_im.save(buff,format="PNG")
+    img_str = base64.b64encode(buff.getvalue())
+#     print(""+str(img_str,'utf-8'))
+
     height, width, depth = image.shape
 
     # resizing the image to find spaces better

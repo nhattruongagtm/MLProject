@@ -6,35 +6,48 @@ import androidx.appcompat.app.AppCompatActivity;
 
 
 import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import gun0912.tedbottompicker.TedBottomPicker;
@@ -43,16 +56,21 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_CODE = 1;
     private static final int IMAGE_CAPTURE_CODE = 2;
+    private static final int RC_DRAW = 3;
     private TextView txt, txtCNN, txtSVM;
-    private Button btnResult,btnSelectImg,btnCamera,btnGallery,btnPredict;
+    private Button btnResult,btnSelectImg,btnGallery,btnPredict,btnDraw;
     private EditText n1, n2;
     private ImageView imageView;
     private final int REQUEST_CODE_CAMERA = 1;
     private Uri urlImage;
-    private String path = null;
     private Python py;
     private PyObject pyObject,pyObjectCNN;
     private ProgressBar progressBar_svm,progressBar_cnn;
+    private LinearLayout resultLayout;
+    private boolean toogle = false;
+    private BitmapDrawable drawable;
+    private Bitmap bitmap;
+    private String imageString = "";
 
 
     @Override
@@ -81,52 +99,56 @@ public class MainActivity extends AppCompatActivity {
                 requestPermissions();
             }
         });
+        // vẽ
 
-        // mở camera
-        btnCamera.setOnClickListener(new View.OnClickListener() {
+        DrawFragment drawFragment = new DrawFragment();
+
+        btnDraw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if(checkSelfPermission(Manifest.permission.CAMERA) ==
-                    PackageManager.PERMISSION_DENIED ||
-                            checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                            PackageManager.PERMISSION_DENIED){
-                        String[] permission = {Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                        requestPermissions(permission,PERMISSION_CODE) ;
-                    }
-                    else{
-                        openCamera();
-                    }
+                toogle = !toogle;
+
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+
+                if(toogle){
+                    resultLayout.setVisibility(View.GONE);
+                    ft.add(R.id.framelayout,drawFragment);
                 }
                 else{
-
+                    ft.remove(drawFragment);
+                    resultLayout.setVisibility(View.VISIBLE);
                 }
+                ft.commit();
+
             }
         });
         // dự đoán
         btnPredict.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(urlImage == null){
-//                    Toast.makeText(MainActivity.this, "Vui lòng chụp ảnh hoặc chọn từ thư viện!", Toast.LENGTH_SHORT).show();
-//                }
-//                else{
-//                    Python py = Python.getInstance();
-//                    PyObject pyObject = py.getModule("test_svm");
-//                    PyObject obj = pyObject.callAttr("main","example.png");
-////                    PyObject obj_cnn = pyObject_CNN.callAttr("main","example3.png");
-//
-//                    txtSVM.setText(obj.toString());
-////                    txtCNN.setText(obj_cnn.toString());
-//                }
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.remove(drawFragment);
+                ft.commit();
+                resultLayout.setVisibility(View.VISIBLE);
+                if(urlImage == null){
+                    Toast.makeText(MainActivity.this, "Vui lòng chụp ảnh hoặc chọn từ thư viện!", Toast.LENGTH_SHORT).show();
+                }
+                else {
 
-                // dự đoán cnn
-                new CNNAsynTask().execute();
+                    drawable = (BitmapDrawable) imageView.getDrawable();
+                    bitmap = drawable.getBitmap();
+                    imageString = getStringImage(bitmap);
 
 
-                // dự đoán svm
-                new SVMAsynTask().execute();
+                    // dự đoán svm
+                    new SVMAsynTask().execute(imageString);
 
+                    // dự đoán cnn
+                    new CNNAsynTask().execute(imageString);
+
+                }
 
 
             }
@@ -161,15 +183,7 @@ public class MainActivity extends AppCompatActivity {
                     urlImage = uri;
                     Bitmap bmp = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
                     imageView.setImageBitmap(bmp);
-//                    Toast.makeText(MainActivity.this, urlImage.toString(), Toast.LENGTH_SHORT).show();
 
-
-
-                    File storage = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                    File imgFile = File.createTempFile("example2",".png",storage);
-                    path = imgFile.getAbsolutePath();
-
-                    Log.d("path--------------",path);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -194,13 +208,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void maping(){
         imageView = findViewById(R.id.img);
-        btnCamera = findViewById(R.id.camera);
         btnGallery = findViewById(R.id.gallery);
         btnPredict = findViewById(R.id.btnPredict);
         txtCNN = findViewById(R.id.txtCNN);
         txtSVM = findViewById(R.id.txtSVM);
         progressBar_svm = findViewById(R.id.progress_circular);
         progressBar_cnn = findViewById(R.id.progress_circular1);
+        btnDraw = findViewById(R.id.draw);
+        resultLayout = findViewById(R.id.result_predict);
+
     }
     private void openCamera(){
         ContentValues values = new ContentValues();
@@ -233,9 +249,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
+            String imgString = strings[0];
             String predict = "";
 
-            PyObject obj = pyObject.callAttr("main","example.png");
+            PyObject obj = pyObject.callAttr("main",imgString);
 
             predict = obj.toString();
 
@@ -259,11 +276,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
+            String imgString = strings[0];
             String predict = "";
 
-            PyObject obj_cnn = pyObjectCNN.callAttr("main","example.png");
+            PyObject obj_cnn = pyObjectCNN.callAttr("main",imgString);
 
             predict = obj_cnn.toString();
+
+//            byte data[] = android.util.Base64.decode(str,Base64.DEFAULT);
+//            Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
+
+//            imageView.setImageBitmap(bmp);
 
             return predict;
         }
@@ -280,5 +303,16 @@ public class MainActivity extends AppCompatActivity {
             progressBar_cnn.setVisibility(View.GONE);
             txtCNN.setText(s);
         }
+    }
+    private String getStringImage(Bitmap bitmap){
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
+
+        byte[] imageBytes = baos.toByteArray();
+
+        String encodeImage = android.util.Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodeImage;
+
     }
 }
