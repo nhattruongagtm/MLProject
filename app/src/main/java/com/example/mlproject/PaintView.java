@@ -63,14 +63,15 @@ public class PaintView extends View {
 
     public void initialise (DisplayMetrics displayMetrics) {
 
-        int height = displayMetrics.heightPixels;
-        int width = displayMetrics.widthPixels;
+        int height = 200*3;
+        int width = 380*2+200;
 
         mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
 
         currentColor = DEFAULT_COLOR;
         strokeWidth = BRUSH_SIZE;
+
 
     }
 
@@ -211,12 +212,16 @@ public class PaintView extends View {
 
     }
 
+    public Bitmap getBitmap(){
+        return mBitmap;
+    }
+
     public void saveImage () {
 
         int count = 0;
 
         File sdDirectory = Environment.getExternalStorageDirectory();
-        File subDirectory = new File(sdDirectory.toString() + "/Pictures/Paint");
+        File subDirectory = new File(sdDirectory.toString() + "/Pictures");
 
         if (subDirectory.exists()) {
 
@@ -247,6 +252,7 @@ public class PaintView extends View {
 
                 fileOutputStream = new FileOutputStream(image);
 
+//                mBitmap = Bitmap.createScaledBitmap(mBitmap, 380, 200, false);
                 mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
 
                 fileOutputStream.flush();

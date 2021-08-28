@@ -70,7 +70,8 @@ def main(file):
         # Get bounding box
         x, y, w, h = cv2.boundingRect(ctr)
         # Getting ROI
-        roi = image[y - 10:y + h + 10, x - 10:x + w + 10]
+        roi = image[y -20 :y + h + 40 , x - 40:x + w + 40]
+
 
         roi = cv2.resize(roi, dsize=(28, 28), interpolation=cv2.INTER_CUBIC)
         roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
@@ -95,8 +96,8 @@ def main(file):
     for i in range(len(pchl)):
         # print (pchl[i][0])
         pcw.append(characters[pchl[i][0]])
-        axs[i].set_title('-------> predicted letter: ' + characters[pchl[i][0]], x=2.5, y=0.24)
-        axs[i].imshow(m[i], interpolation=interp)
+#         axs[i].set_title('-------> predicted letter: ' + characters[pchl[i][0]], x=2.5, y=0.24)
+#         axs[i].imshow(m[i], interpolation=interp)
 
     plt.show()
 

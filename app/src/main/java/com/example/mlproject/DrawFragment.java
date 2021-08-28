@@ -3,8 +3,11 @@ package com.example.mlproject;
 import android.Manifest;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,11 +22,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.io.ByteArrayOutputStream;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -117,6 +123,17 @@ public class DrawFragment extends Fragment {
 
                 }
                 paintView.saveImage();
+            }
+        });
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bmp = paintView.getBitmap();
+                ImageView imgView = getActivity().findViewById(R.id.img);
+                imgView.setImageBitmap(bmp);
+
+
+
             }
         });
 

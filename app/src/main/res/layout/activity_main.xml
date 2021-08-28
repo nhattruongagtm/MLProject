@@ -38,11 +38,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <Button
+                    android:id="@+id/camera"
+                    android:layout_gravity="center"
+                    android:text="Chụp ảnh"
+                    android:layout_weight="1"
+                    android:textAllCaps="false"
+                    android:layout_marginRight="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <Button
                     android:id="@+id/gallery"
                     android:layout_gravity="center"
                     android:text="Chọn ảnh"
                     android:layout_weight="1"
                     android:textAllCaps="false"
+                    android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>

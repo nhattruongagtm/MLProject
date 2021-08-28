@@ -13,13 +13,13 @@ def main(file):
     import io
     from matplotlib import pyplot as plt
 
-    m_json = join(dirname(__file__), "model4.json")
+    m_json = join(dirname(__file__), "model5.json")
     json_file = open(m_json, 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
 
-    mModel = join(dirname(__file__), "model4.h5")
+    mModel = join(dirname(__file__), "model5.h5")
     loaded_model.load_weights(mModel)
 
     model = loaded_model
@@ -82,7 +82,8 @@ def main(file):
         # Get bounding box
         x, y, w, h = cv2.boundingRect(ctr)
         # Getting ROI
-        roi = image[ y -10: y + h +10, x- 10:x + w + 10]
+        roi = image[y -20 :y + h + 40 , x - 40:x + w + 40]
+
 
         roi = cv2.resize(roi, dsize=(28, 28), interpolation=cv2.INTER_CUBIC)
         roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)

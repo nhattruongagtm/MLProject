@@ -3,6 +3,9 @@ package com.example.mlproject;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.CameraProvider;
+import androidx.camera.core.UseCaseGroup;
+import androidx.camera.core.ViewPort;
 
 
 import android.Manifest;
@@ -22,12 +25,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Rational;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -39,6 +45,7 @@ import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
+import com.otaliastudios.cameraview.CameraView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,19 +65,23 @@ public class MainActivity extends AppCompatActivity {
     private static final int IMAGE_CAPTURE_CODE = 2;
     private static final int RC_DRAW = 3;
     private TextView txt, txtCNN, txtSVM;
-    private Button btnResult,btnSelectImg,btnGallery,btnPredict,btnDraw;
+    private Button btnResult,btnSelectImg,btnCamera, btnGallery,btnPredict,btnDraw;
     private EditText n1, n2;
     private ImageView imageView;
     private final int REQUEST_CODE_CAMERA = 1;
     private Uri urlImage;
     private Python py;
-    private PyObject pyObject,pyObjectCNN;
+    private PyObject pyObject,pyObjectCNN,pyObjectImage;
     private ProgressBar progressBar_svm,progressBar_cnn;
     private LinearLayout resultLayout;
     private boolean toogle = false;
     private BitmapDrawable drawable;
     private Bitmap bitmap;
     private String imageString = "";
+    private static final int SELECT_PICTURE = 1;
+    DrawFragment drawFragment;
+    private String selectedImagePath;
+    CameraProvider cameraProvider;
 
 
     @Override
@@ -80,29 +91,59 @@ public class MainActivity extends AppCompatActivity {
 
         maping();
 
+        drawFragment = new DrawFragment();
+
         // khai báo python
-        if(!Python.isStarted()){
-                Python.start(new AndroidPlatform(this));
-            }
+        if (!Python.isStarted()) {
+            Python.start(new AndroidPlatform(this));
+        }
 
         // tạo instance
         py = Python.getInstance();
         // tạo obj gọi đến tên file
         pyObject = py.getModule("test_svm");
         pyObjectCNN = py.getModule("test_cnn");
+        pyObjectImage = py.getModule("processImage");
+
+        // mở camera
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+//        Intent intent = getIntent();
+//        if(intent != null){
+//
+//
+//            Bundle bundle = intent.getBundleExtra("img");
+//            byte[] byteArray = bundle.getByteArray("img");
+//
+//            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//            imageView.setImageBitmap(bmp);
+//    }
+
+
+            
+
+
 
 
         // mở thư viện ảnh
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestPermissions();
+//                requestPermissions();
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent,
+                        "Select Picture"), SELECT_PICTURE);
             }
         });
+
         // vẽ
-
-        DrawFragment drawFragment = new DrawFragment();
-
         btnDraw.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,16 +173,15 @@ public class MainActivity extends AppCompatActivity {
                 ft.remove(drawFragment);
                 ft.commit();
                 resultLayout.setVisibility(View.VISIBLE);
-                if(urlImage == null){
-                    Toast.makeText(MainActivity.this, "Vui lòng chụp ảnh hoặc chọn từ thư viện!", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                toogle = false;
 
+                try{
                     drawable = (BitmapDrawable) imageView.getDrawable();
                     bitmap = drawable.getBitmap();
                     imageString = getStringImage(bitmap);
 
-
+                    // hiển thị hình ảnh
+                    displayImageByContours(imageString);
                     // dự đoán svm
                     new SVMAsynTask().execute(imageString);
 
@@ -149,6 +189,14 @@ public class MainActivity extends AppCompatActivity {
                     new CNNAsynTask().execute(imageString);
 
                 }
+                catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Vui lòng chọn hình ảnh!", Toast.LENGTH_SHORT).show();
+                }
+
+
+
+
 
 
             }
@@ -197,17 +245,26 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == 2 && resultCode == RESULT_OK && data != null){
+//        if(requestCode == 2 && resultCode == RESULT_OK && data != null){
+//
+//            imageView.setImageURI(urlImage);
+//            Toast.makeText(this, urlImage.toString(), Toast.LENGTH_SHORT).show();
+//
+//        }
 
-            imageView.setImageURI(urlImage);
-            Toast.makeText(this, urlImage.toString(), Toast.LENGTH_SHORT).show();
-
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                Uri selectedImageUri = data.getData();
+                urlImage = selectedImageUri;
+                imageView.setImageURI(urlImage);
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void maping(){
         imageView = findViewById(R.id.img);
+        btnCamera = findViewById(R.id.camera);
         btnGallery = findViewById(R.id.gallery);
         btnPredict = findViewById(R.id.btnPredict);
         txtCNN = findViewById(R.id.txtCNN);
@@ -314,5 +371,14 @@ public class MainActivity extends AppCompatActivity {
         String encodeImage = android.util.Base64.encodeToString(imageBytes, Base64.DEFAULT);
         return encodeImage;
 
+    }
+    private void displayImageByContours(String image){
+        PyObject obj_img = pyObjectImage.callAttr("main",image);
+        String code = obj_img.toString();
+
+        byte data[] = android.util.Base64.decode(code,Base64.DEFAULT);
+        Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
+
+        imageView.setImageBitmap(bmp);
     }
 }
