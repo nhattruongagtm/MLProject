@@ -19,14 +19,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MLProject">
         <activity
-            android:name=".CameraActivity"
+            android:name=".AndroidCameraApi"
             android:exported="true" />
-        <activity
-            android:name=".DrawActivity"
-            android:exported="true" />
-        <activity
-            android:name=".DrawView"
-            android:exported="true" /> <!-- <provider -->
+<!--        <activity-->
+<!--            android:name=".DrawView"-->
+<!--            android:exported="true" /> &lt;!&ndash; <provider &ndash;&gt;-->
         <!-- android:name="androidx.core.content.FileProvider" -->
         <!-- android:authorities="com.example.android.fileprovider" -->
         <!-- android:exported="false" -->

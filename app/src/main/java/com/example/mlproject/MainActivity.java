@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_CODE = 1;
     private static final int IMAGE_CAPTURE_CODE = 2;
     private static final int RC_DRAW = 3;
+    private static final int REQUEST_IMG = 4;
     private TextView txt, txtCNN, txtSVM;
     private Button btnResult,btnSelectImg,btnCamera, btnGallery,btnPredict,btnDraw;
     private EditText n1, n2;
@@ -109,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(MainActivity.this,AndroidCameraApi.class);
+                startActivityForResult(intent,REQUEST_IMG);
             }
         });
 
@@ -259,6 +261,14 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setImageURI(urlImage);
             }
         }
+        if(resultCode == RESULT_OK && requestCode == REQUEST_IMG){
+            String imageString = data.getStringExtra("imgString");
+
+            byte bytes[] = android.util.Base64.decode(imageString,Base64.DEFAULT);
+            Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+            imageView.setImageBitmap(bmp);
+
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -339,6 +349,8 @@ public class MainActivity extends AppCompatActivity {
             PyObject obj_cnn = pyObjectCNN.callAttr("main",imgString);
 
             predict = obj_cnn.toString();
+
+
 
 //            byte data[] = android.util.Base64.decode(str,Base64.DEFAULT);
 //            Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);

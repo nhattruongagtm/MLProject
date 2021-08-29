@@ -40,7 +40,7 @@ def main(file):
     for i, ctr in enumerate(sorted_ctrs):
         # Get bounding box
         x, y, w, h = cv2.boundingRect(ctr)
-        cv2.rectangle(dp, (x - 10, y - 10), (x + w + 10, y + h + 10), (90, 0, 255), 9)
+        cv2.rectangle(dp, (x - 10, y - 10), (x + w + 10, y + h + 10), (13, 154, 0), 35)
 
     pil_im = Image.fromarray(dp)
     buff = io.BytesIO()
