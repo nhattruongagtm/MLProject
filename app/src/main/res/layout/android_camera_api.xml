@@ -9,20 +9,21 @@
     <!-- TextureView cho việc preview Camera2 -->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="600dp">
+        android:layout_height="1600px">
         <TextureView
             android:id="@+id/texture"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="1060px"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="1590px"
             android:layout_alignParentTop="true"
 
             />
         <View
-            android:layout_marginTop="250dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="670px"
+            android:layout_marginStart="150px"
             android:background="@drawable/squarecamera__camera_snap_selected"
-            android:layout_width="300dp"
-            android:layout_height="100dp"/>
+            android:layout_width="780px"
+            android:layout_height="265px"/>
     </FrameLayout>
     <!-- Button thực hiện việc chụp ảnh -->
     <Button

@@ -1,15 +1,6 @@
 package com.example.mlproject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.CameraProvider;
-import androidx.camera.core.UseCaseGroup;
-import androidx.camera.core.ViewPort;
-
-
 import android.Manifest;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
@@ -17,63 +8,56 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.Rational;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-import com.otaliastudios.cameraview.CameraView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 import gun0912.tedbottompicker.TedBottomPicker;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final int MY_CAMERA_REQUEST_CODE = 100;
     private static final int PERMISSION_CODE = 1;
     private static final int IMAGE_CAPTURE_CODE = 2;
     private static final int RC_DRAW = 3;
     private static final int REQUEST_IMG = 4;
     private TextView txt, txtCNN, txtSVM;
-    private Button btnResult,btnSelectImg,btnCamera, btnGallery,btnPredict,btnDraw;
+    private Button btnResult, btnSelectImg, btnCamera, btnGallery, btnPredict, btnDraw;
     private EditText n1, n2;
     private ImageView imageView;
     private final int REQUEST_CODE_CAMERA = 1;
     private Uri urlImage;
     private Python py;
-    private PyObject pyObject,pyObjectCNN,pyObjectImage;
-    private ProgressBar progressBar_svm,progressBar_cnn;
+    private PyObject pyObject, pyObjectCNN, pyObjectImage;
+    private ProgressBar progressBar_svm, progressBar_cnn;
     private LinearLayout resultLayout;
     private boolean toogle = false;
     private BitmapDrawable drawable;
@@ -82,8 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
     DrawFragment drawFragment;
     private String selectedImagePath;
-    CameraProvider cameraProvider;
 
+    // current path image from camera
+    private String currentPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,8 +95,16 @@ public class MainActivity extends AppCompatActivity {
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Source.getInstance().isHaveImage =false;
                 Intent intent = new Intent(MainActivity.this,AndroidCameraApi.class);
                 startActivityForResult(intent,REQUEST_IMG);
+//                if (checkSelfPermission(Manifest.permission.CAMERA)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    requestPermissions(new String[]{Manifest.permission.CAMERA},
+//                            MY_CAMERA_REQUEST_CODE);
+//                }else{
+//                    openCameraProvider();
+//                }
             }
         });
 
@@ -125,11 +118,6 @@ public class MainActivity extends AppCompatActivity {
 //            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 //            imageView.setImageBitmap(bmp);
 //    }
-
-
-            
-
-
 
 
         // mở thư viện ảnh
@@ -154,11 +142,10 @@ public class MainActivity extends AppCompatActivity {
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
 
-                if(toogle){
+                if (toogle) {
                     resultLayout.setVisibility(View.GONE);
-                    ft.add(R.id.framelayout,drawFragment);
-                }
-                else{
+                    ft.add(R.id.framelayout, drawFragment);
+                } else {
                     ft.remove(drawFragment);
                     resultLayout.setVisibility(View.VISIBLE);
                 }
@@ -177,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 resultLayout.setVisibility(View.VISIBLE);
                 toogle = false;
 
-                try{
+                try {
                     drawable = (BitmapDrawable) imageView.getDrawable();
                     bitmap = drawable.getBitmap();
                     imageString = getStringImage(bitmap);
@@ -190,22 +177,37 @@ public class MainActivity extends AppCompatActivity {
                     // dự đoán cnn
                     new CNNAsynTask().execute(imageString);
 
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(MainActivity.this, "Vui lòng chọn hình ảnh!", Toast.LENGTH_SHORT).show();
                 }
-
-
-
-
 
 
             }
         });
 
     }
-    private void requestPermissions(){
+
+    private void openCameraProvider(){
+//        String fileName = "photo";
+//        File storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//        try {
+//            File imageFile = File.createTempFile(fileName, ".jpg", storageDirectory);
+//            currentPath = imageFile.getAbsolutePath();
+//            Uri imageUri = FileProvider.getUriForFile(MainActivity.this, "com.example.mlproject.fileprovider", imageFile);
+//            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+//            startActivityForResult(intent, REQUEST_IMG);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        //----------------
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_IMG);
+    }
+
+    private void requestPermissions() {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
@@ -225,13 +227,13 @@ public class MainActivity extends AppCompatActivity {
                 .check();
     }
 
-    private void openGallery(){
+    private void openGallery() {
         TedBottomPicker.OnImageSelectedListener listener = new TedBottomPicker.OnImageSelectedListener() {
             @Override
             public void onImageSelected(Uri uri) {
                 try {
                     urlImage = uri;
-                    Bitmap bmp = MediaStore.Images.Media.getBitmap(getContentResolver(),uri);
+                    Bitmap bmp = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                     imageView.setImageBitmap(bmp);
 
                 } catch (IOException e) {
@@ -261,18 +263,25 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setImageURI(urlImage);
             }
         }
-        if(resultCode == RESULT_OK && requestCode == REQUEST_IMG){
-            String imageString = data.getStringExtra("imgString");
+        if (resultCode == RESULT_OK && requestCode == REQUEST_IMG) {
+            if(Source.getInstance().isHaveImage){
+                byte bytes[] = android.util.Base64.decode(Source.getInstance().data, Base64.DEFAULT);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                Bitmap bmpCrop = Bitmap.createBitmap(bmp,165,485,850,245);
+                imageView.setImageBitmap(bmpCrop);
+            }
 
-            byte bytes[] = android.util.Base64.decode(imageString,Base64.DEFAULT);
-            Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-            imageView.setImageBitmap(bmp);
 
+//            Bitmap bitmap = BitmapFactory.decodeFile(this.currentPath);
+//            imageView.setImageBitmap(bitmap);
+
+//            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+//            imageView.setImageBitmap(bitmap);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void maping(){
+    private void maping() {
         imageView = findViewById(R.id.img);
         btnCamera = findViewById(R.id.camera);
         btnGallery = findViewById(R.id.gallery);
@@ -285,41 +294,51 @@ public class MainActivity extends AppCompatActivity {
         resultLayout = findViewById(R.id.result_predict);
 
     }
-    private void openCamera(){
+
+    private void openCamera() {
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE,"a");
-        values.put(MediaStore.Images.Media.DESCRIPTION,"b");
-        urlImage = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+        values.put(MediaStore.Images.Media.TITLE, "a");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "b");
+        urlImage = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,urlImage);
-        startActivityForResult(intent,IMAGE_CAPTURE_CODE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, urlImage);
+        startActivityForResult(intent, IMAGE_CAPTURE_CODE);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
             case PERMISSION_CODE:
-                if(grantResults.length > 0 && grantResults[0] ==
-                PackageManager.PERMISSION_GRANTED){
+                if (grantResults.length > 0 && grantResults[0] ==
+                        PackageManager.PERMISSION_GRANTED) {
                     openCamera();
-                }
-                else {
+                } else {
                     Toast.makeText(this, "Không có quyền truy cập camera!", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case MY_CAMERA_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openCameraProvider();
+                } else {
+                    Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+                }
+                break;
         }
 
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-    private class SVMAsynTask extends AsyncTask<String,Void,String>{
+
+    private class SVMAsynTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... strings) {
             String imgString = strings[0];
             String predict = "";
 
-            PyObject obj = pyObject.callAttr("main",imgString);
+            PyObject obj = pyObject.callAttr("main", imgString);
 
             predict = obj.toString();
 
@@ -339,17 +358,17 @@ public class MainActivity extends AppCompatActivity {
             txtSVM.setText(s);
         }
     }
-    private class CNNAsynTask extends AsyncTask<String,Void,String>{
+
+    private class CNNAsynTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... strings) {
             String imgString = strings[0];
             String predict = "";
 
-            PyObject obj_cnn = pyObjectCNN.callAttr("main",imgString);
+            PyObject obj_cnn = pyObjectCNN.callAttr("main", imgString);
 
             predict = obj_cnn.toString();
-
 
 
 //            byte data[] = android.util.Base64.decode(str,Base64.DEFAULT);
@@ -373,10 +392,11 @@ public class MainActivity extends AppCompatActivity {
             txtCNN.setText(s);
         }
     }
-    private String getStringImage(Bitmap bitmap){
+
+    private String getStringImage(Bitmap bitmap) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100,baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
         byte[] imageBytes = baos.toByteArray();
 
@@ -384,12 +404,13 @@ public class MainActivity extends AppCompatActivity {
         return encodeImage;
 
     }
-    private void displayImageByContours(String image){
-        PyObject obj_img = pyObjectImage.callAttr("main",image);
+
+    private void displayImageByContours(String image) {
+        PyObject obj_img = pyObjectImage.callAttr("main", image);
         String code = obj_img.toString();
 
-        byte data[] = android.util.Base64.decode(code,Base64.DEFAULT);
-        Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
+        byte data[] = android.util.Base64.decode(code, Base64.DEFAULT);
+        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 
         imageView.setImageBitmap(bmp);
     }
