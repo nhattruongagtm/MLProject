@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,30 +8,97 @@
     android:orientation="vertical"
     tools:context="com.example.mlproject.AndroidCameraApi">
     <!-- TextureView cho việc preview Camera2 -->
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="1600px">
-        <TextureView
-            android:id="@+id/texture"
-            android:layout_width="1060px"
-            android:layout_gravity="center_horizontal"
-            android:layout_height="1590px"
-            android:layout_alignParentTop="true"
+        android:layout_height="1630px">
 
-            />
-        <View
-            android:layout_marginTop="670px"
-            android:layout_marginStart="150px"
-            android:background="@drawable/squarecamera__camera_snap_selected"
-            android:layout_width="780px"
-            android:layout_height="265px"/>
+        <androidx.cardview.widget.CardView
+            android:layout_width="1060px"
+            android:layout_height="1590px"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="3dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp">
+
+            <TextureView
+                android:id="@+id/texture"
+                android:layout_width="1060px"
+                android:layout_height="1590px"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center_horizontal" />
+
+            <ImageView
+                android:id="@+id/igBackground"
+                android:layout_width="1060px"
+                android:layout_height="1590px"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/background" />
+
+            <View
+                android:layout_width="780px"
+                android:layout_height="265px"
+                android:layout_marginStart="150px"
+                android:layout_marginTop="670px"
+                android:background="@drawable/squarecamera__camera_snap_selected" />
+        </androidx.cardview.widget.CardView>
     </FrameLayout>
     <!-- Button thực hiện việc chụp ảnh -->
-    <Button
-        android:id="@+id/btn_takepicture"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Chụp ảnh" />
+        android:layout_marginTop="10dp"
+        android:textSize="15sp"
+        android:textColor="#ff7b5c"
+        android:textStyle="bold"
+        android:text="Đưa chữ cần nhận diện vào vùng được chọn"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btn_takepicture"
+            android:layout_width="70dp"
+            android:layout_marginBottom="30dp"
+            android:layout_height="70dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:cardCornerRadius="35dp"
+            app:cardElevation="30dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#6052ff"
+                app:cardCornerRadius="31dp" >
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_round_camera_24"/>
+            </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btn_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btn_takepicture"
+            app:layout_constraintBottom_toBottomOf="@id/btn_takepicture"
+            app:layout_constraintEnd_toStartOf="@id/btn_takepicture"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:cardCornerRadius="25dp"
+            app:cardElevation="30dp">
+
+           <ImageView
+               android:layout_gravity="center"
+               android:layout_width="20dp"
+               android:layout_height="20dp"
+               android:src="@drawable/icon_back"/>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>

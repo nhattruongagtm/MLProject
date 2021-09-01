@@ -6,8 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.ImageFormat;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -32,10 +37,12 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 
 import java.io.ByteArrayOutputStream;
@@ -52,8 +59,8 @@ public class AndroidCameraApi extends AppCompatActivity {
     private static final String TAG = "AndroidCameraApi";
 
     // Button cho capture ảnh
-    private Button takePictureButton;
-
+    private CardView takePictureButton;
+    private ImageView imageView;
     // preview camera
     private TextureView textureView;
 
@@ -88,7 +95,7 @@ public class AndroidCameraApi extends AppCompatActivity {
         textureView = (TextureView) findViewById(R.id.texture);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
-        takePictureButton = (Button) findViewById(R.id.btn_takepicture);
+        takePictureButton =  findViewById(R.id.btn_takepicture);
         assert takePictureButton != null;
 
         takePictureButton.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +104,35 @@ public class AndroidCameraApi extends AppCompatActivity {
                 takePicture();
             }
         });
+        // put a hole
+        imageView = findViewById(R.id.igBackground);
+        Bitmap foreground = BitmapFactory.decodeResource(getResources(), R.drawable.background);
+        foreground = punchAHoleInABitmap(foreground);
+        imageView.setImageBitmap(covert(foreground));
 
+        CardView btBack = findViewById(R.id.btn_back);
+        btBack.setOnClickListener(v -> {
+            finish();
+        });
+    }
+
+    private Bitmap covert( Bitmap foreground) {
+        Bitmap combinedBitmap = Bitmap.createBitmap(foreground.getWidth(), foreground.getHeight(), foreground.getConfig());
+        Canvas canvas = new Canvas(combinedBitmap);
+        Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        canvas.drawBitmap(foreground, 0, 0, paint);
+        return combinedBitmap;
+    }
+
+    private Bitmap punchAHoleInABitmap(Bitmap foreground) {
+        Bitmap bitmap = Bitmap.createBitmap(foreground.getWidth(), foreground.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        canvas.drawBitmap(foreground, 0, 0, paint);
+        paint.setAntiAlias(true);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        canvas.drawRoundRect(425,1850,2560,2570,140,140,paint);
+        return bitmap;
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
