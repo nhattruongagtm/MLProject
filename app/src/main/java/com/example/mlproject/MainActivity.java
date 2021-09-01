@@ -1,6 +1,7 @@
 package com.example.mlproject;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ContentValues;
@@ -12,6 +13,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -95,9 +97,9 @@ public class MainActivity extends AppCompatActivity {
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Source.getInstance().isHaveImage =false;
-                Intent intent = new Intent(MainActivity.this,AndroidCameraApi.class);
-                startActivityForResult(intent,REQUEST_IMG);
+                Source.getInstance().isHaveImage = false;
+                Intent intent = new Intent(MainActivity.this, AndroidCameraApi.class);
+                startActivityForResult(intent, REQUEST_IMG);
 //                if (checkSelfPermission(Manifest.permission.CAMERA)
 //                        != PackageManager.PERMISSION_GRANTED) {
 //                    requestPermissions(new String[]{Manifest.permission.CAMERA},
@@ -171,11 +173,8 @@ public class MainActivity extends AppCompatActivity {
 
                     // hiển thị hình ảnh
                     displayImageByContours(imageString);
-                    // dự đoán svm
-                    new SVMAsynTask().execute(imageString);
-
-                    // dự đoán cnn
-                    new CNNAsynTask().execute(imageString);
+                    // du doan
+                    duDoan();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -188,7 +187,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void openCameraProvider(){
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void duDoan() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            // dự đoán svm
+            new SVMAsynTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageString);
+            // dự đoán cnn
+            new CNNAsynTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, imageString);
+        } else {
+            // dự đoán svm
+            new SVMAsynTask().execute(imageString);
+            // dự đoán cnn
+            new CNNAsynTask().execute(imageString);
+        }
+    }
+
+    private void openCameraProvider() {
 //        String fileName = "photo";
 //        File storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 //        try {
@@ -264,10 +278,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_IMG) {
-            if(Source.getInstance().isHaveImage){
+            if (Source.getInstance().isHaveImage) {
                 byte bytes[] = android.util.Base64.decode(Source.getInstance().data, Base64.DEFAULT);
-                Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                Bitmap bmpCrop = Bitmap.createBitmap(bmp,165,485,850,245);
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                Bitmap bmpCrop = Bitmap.createBitmap(bmp, 165, 485, 850, 245);
                 imageView.setImageBitmap(bmpCrop);
             }
 
