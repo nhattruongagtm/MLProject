@@ -56,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_DRAW = 3;
     private static final int REQUEST_IMG = 4;
     private TextView txt, txtCNN, txtSVM;
-    private Button btnResult, btnSelectImg, btnCamera, btnGallery, btnPredictCNN, btnPredictSVM, btXuLyAnh, btnDraw;
+    private Button btnResult, btnSelectImg;
+    private CardView btnCamera, btnGallery, btnDraw;
+    private CardView btnPredictCNN, btnPredictSVM, btXuLyAnh;
     private EditText n1, n2;
     private ImageView imageView;
     private final int REQUEST_CODE_CAMERA = 1;
@@ -354,8 +356,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void maping() {
         imageView = findViewById(R.id.img);
-        btnCamera = findViewById(R.id.camera);
-        btnGallery = findViewById(R.id.gallery);
+        btnCamera = findViewById(R.id.cc);
+        btnGallery = findViewById(R.id.cg);
         btnPredictCNN = findViewById(R.id.btnPredictCNN);
         btnPredictSVM = findViewById(R.id.btnPredictSVM);
         btXuLyAnh = findViewById(R.id.xuLyAnh);
@@ -363,10 +365,13 @@ public class MainActivity extends AppCompatActivity {
         txtSVM = findViewById(R.id.txtSVM);
         progressBar_svm = findViewById(R.id.progress_circular);
         progressBar_cnn = findViewById(R.id.progress_circular1);
-        btnDraw = findViewById(R.id.draw);
+        btnDraw = findViewById(R.id.cd);
         resultLayout = findViewById(R.id.result_predict);
         rcnn = findViewById(R.id.rcnn);
         rsvm = findViewById(R.id.rsvm);
+        btnPredictCNN.setEnabled(false);
+        btnPredictSVM.setEnabled(false);
+        btXuLyAnh.setEnabled(false);
     }
 
     private void openCamera() {
