@@ -123,8 +123,10 @@ def cnn(not_value):
         x, y, w, h = cv2.boundingRect(ctr)
         # Getting ROI
         roi = image[y - 20:y + h + 40, x - 40:x + w + 40]
+        roi = cv2.cvtColor(roi,cv2.COLOR_BGR2GRAY)
+        roi = cv2.medianBlur(roi,5)
+        ret,roi = cv2.threshold(roi,127,255,cv2.THRESH_BINARY)
         roi = cv2.resize(roi, dsize=(28, 28), interpolation=cv2.INTER_CUBIC)
-        roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
         list_image.append(roi)
         roi = np.array(roi)
         t = np.copy(roi)
@@ -152,8 +154,10 @@ def svm(not_value):
         x, y, w, h = cv2.boundingRect(ctr)
         # Getting ROI
         roi = image[y - 20:y + h + 40, x - 40:x + w + 40]
+        roi = cv2.cvtColor(roi,cv2.COLOR_BGR2GRAY)
+        roi = cv2.medianBlur(roi,5)
+        ret,roi = cv2.threshold(roi,127,255,cv2.THRESH_BINARY)
         roi = cv2.resize(roi, dsize=(28, 28), interpolation=cv2.INTER_CUBIC)
-        roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
         list_image.append(roi)
         roi = np.array(roi)
         t = np.copy(roi)
