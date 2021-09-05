@@ -1,101 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_draw"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="#f234"
-    android:id="@+id/fragment_draw"
-    tools:context=".DrawActivity">
-    <LinearLayout
-        android:layout_margin="5dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/t1"
+        android:layout_width="3dp"
+        android:layout_height="0dp"
+        android:background="#707070"
+        app:layout_constraintBottom_toBottomOf="@id/l2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="7dp"
+        android:translationZ="1px"
+        android:layout_height="7dp"
+        app:cardBackgroundColor="#3f3f3f"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toTopOf="@id/l2"
+        app:layout_constraintStart_toEndOf="@id/l1">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="7dp"
+            android:layout_height="7dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/l1"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:background="#3f3f3f"
         android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:gravity="center_horizontal"
-        android:layout_height="60dp">
+        app:layout_constraintBottom_toBottomOf="@id/l2"
+        app:layout_constraintStart_toEndOf="@id/t1"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:src="@drawable/undo"
+        <androidx.cardview.widget.CardView
             android:id="@+id/undo"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_height="wrap_content"/>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:src="@drawable/redo"
-            android:layout_marginLeft="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardBackgroundColor="#3f3f3f"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toTopOf="@id/redo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/icon_undo"
+                app:tint="@color/white" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
             android:id="@+id/redo"
-            android:layout_marginRight="5dp"
-            android:layout_height="wrap_content"/>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:src="@drawable/delete"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardBackgroundColor="#3f3f3f"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toTopOf="@id/clear"
+            app:layout_constraintStart_toStartOf="@id/undo"
+            app:layout_constraintTop_toBottomOf="@id/undo">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/icon_redo"
+                app:tint="@color/white" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
             android:id="@+id/clear"
-            android:layout_height="wrap_content"/>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:src="@drawable/save"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardBackgroundColor="#3f3f3f"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toTopOf="@id/save_img"
+            app:layout_constraintStart_toStartOf="@id/undo"
+            app:layout_constraintTop_toBottomOf="@id/redo">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/img_185728"
+                app:tint="@color/white" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
             android:id="@+id/save_img"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_height="wrap_content"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardBackgroundColor="#3f3f3f"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toTopOf="@id/ccc"
+            app:layout_constraintStart_toStartOf="@id/undo"
+            app:layout_constraintTop_toBottomOf="@id/clear">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_downloading_24"
+                app:tint="@color/white" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ccc"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/save_img">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/chooseColor"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="#f23"
+                app:cardCornerRadius="13dp"
+                app:cardElevation="0dp" />
+        </androidx.cardview.widget.CardView>
 
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.example.mlproject.PaintView
         android:id="@+id/paintView"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="200dp"
-        android:background="@color/white" />
-    <LinearLayout
-        android:background="#f234"
-        android:layout_margin="5dp"
-        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/l1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/l2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#3f3f3f"
         android:gravity="center_horizontal"
-        android:layout_height="wrap_content">
+        app:layout_constraintEnd_toEndOf="@id/paintView"
+        app:layout_constraintStart_toEndOf="@id/l1"
+        app:layout_constraintTop_toBottomOf="@id/paintView">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <SeekBar
-                android:layout_weight="1"
-                android:id="@+id/stroke"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+        <SeekBar
+            android:progress="10"
+            android:id="@+id/stroke"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:progressBackgroundTint="@color/white"
+            android:progressTint="@color/white"
+            android:thumbTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ok_draw"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:layout_width="wrap_content"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ok_draw"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:cardBackgroundColor="#3f3f3f"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
                 android:src="@drawable/check"
-                android:id="@+id/ok_draw"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:layout_height="60dp"/>
+                app:tint="@color/white" />
+        </androidx.cardview.widget.CardView>
 
-            <LinearLayout
-                android:layout_weight="1"
-                android:layout_width="50dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="right|center_vertical"
-                android:layout_height="match_parent">
-                <TextView
-                    android:background="#f23"
-                    android:id="@+id/chooseColor"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"/>
-            </LinearLayout>
-        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

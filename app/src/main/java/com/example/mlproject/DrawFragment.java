@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -30,12 +31,12 @@ import yuku.ambilwarna.AmbilWarnaDialog;
 
 public class DrawFragment extends Fragment {
 
-    private FloatingActionButton btnUndo, btnBack, btnRedo, btnSave, btnOK, btnClear;
+    private CardView btnUndo, btnBack, btnRedo, btnSave, btnOK, btnClear;
     private SeekBar btnStroke;
-    private TextView btnColor;
+    private CardView btnColor;
     private PaintView paintView;
     private static final int STORAGE_PERMISSION_CODE = 1;
-    private static int default_color = Color.BLACK;
+    private static int default_color = Color.RED;
 
     public DrawFragment() {
     }
@@ -108,12 +109,13 @@ public class DrawFragment extends Fragment {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-                    requestStoragePermission();
-
-                }
-                paintView.saveImage();
+//                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//
+//                    requestStoragePermission();
+//
+//                }
+//                paintView.saveImage();
+                Toast.makeText(getActivity(),"Tính năng lưu hình đang được xây dựng",Toast.LENGTH_SHORT).show();
             }
         });
         btnOK.setOnClickListener(new View.OnClickListener() {
@@ -209,7 +211,7 @@ public class DrawFragment extends Fragment {
             public void onOk(AmbilWarnaDialog dialog, int color) {
                 default_color = color;
                 paintView.setColor(color);
-                btnColor.setBackgroundColor(color);
+                btnColor.setCardBackgroundColor(color);
             }
         });
         ambilWarnaDialog.show(); // add

@@ -179,7 +179,7 @@ public class PaintView extends View {
 
         } else {
 
-            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Đã trở lại ví trí đầu tiên", Toast.LENGTH_LONG).show();
 
         }
 
@@ -194,7 +194,7 @@ public class PaintView extends View {
 
         } else {
 
-            Toast.makeText(getContext(), "Nothing to undo", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Đã trở lại ví trí cuối cùng", Toast.LENGTH_LONG).show();
 
         }
 
