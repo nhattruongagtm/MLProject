@@ -30,7 +30,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
@@ -41,6 +44,7 @@ import com.gun0912.tedpermission.TedPermission;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import gun0912.tedbottompicker.TedBottomPicker;
@@ -52,13 +56,14 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_DRAW = 3;
     private static final int REQUEST_IMG = 4;
     private TextView txt, txtCNN, txtSVM;
-    private Button btnResult, btnSelectImg, btnCamera, btnGallery, btnPredict, btnDraw;
+    private Button btnResult, btnSelectImg, btnCamera, btnGallery, btnPredictCNN, btnPredictSVM, btXuLyAnh, btnDraw;
     private EditText n1, n2;
     private ImageView imageView;
     private final int REQUEST_CODE_CAMERA = 1;
     private Uri urlImage;
     private Python py;
-    private PyObject pyObject, pyObjectCNN, pyObjectImage;
+    //    private PyObject pyObject, pyObjectCNN, pyObjectImage;
+    private PyObject pyAndroid;
     private ProgressBar progressBar_svm, progressBar_cnn;
     private LinearLayout resultLayout;
     private boolean toogle = false;
@@ -68,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
     DrawFragment drawFragment;
     private String selectedImagePath;
+    private RecyclerView rcnn;
+    private RecyclerView rsvm;
+    private List<ObjectResult> list_images;
+    private List<ObjectResult> list_images_svm;
+    private ViewAdapter viewAdapter;
+    private ViewAdapter viewAdapterSVM;
+    private String result = "";
+    private String resultSVM = "";
 
     // current path image from camera
     private String currentPath;
@@ -75,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Xóa status bar
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         maping();
@@ -89,9 +104,10 @@ public class MainActivity extends AppCompatActivity {
         // tạo instance
         py = Python.getInstance();
         // tạo obj gọi đến tên file
-        pyObject = py.getModule("test_svm");
-        pyObjectCNN = py.getModule("test_cnn");
-        pyObjectImage = py.getModule("processImage");
+//        pyObject = py.getModule("test_svm");
+//        pyObjectCNN = py.getModule("test_cnn");
+//        pyObjectImage = py.getModule("processImage");
+        pyAndroid = py.getModule("android");
 
         // mở camera
         btnCamera.setOnClickListener(new View.OnClickListener() {
@@ -156,35 +172,66 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // dự đoán
-        btnPredict.setOnClickListener(new View.OnClickListener() {
+        btnPredictCNN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.remove(drawFragment);
-                ft.commit();
-                resultLayout.setVisibility(View.VISIBLE);
-                toogle = false;
-
                 try {
-                    drawable = (BitmapDrawable) imageView.getDrawable();
-                    bitmap = drawable.getBitmap();
-                    imageString = getStringImage(bitmap);
-
-                    // hiển thị hình ảnh
-                    displayImageByContours(imageString);
-                    // du doan
-                    duDoan();
-
+                    btnPredictCNN.setEnabled(false);
+                    new CNNAsynTask().execute(imageString);
                 } catch (Exception e) {
                     e.printStackTrace();
                     Toast.makeText(MainActivity.this, "Vui lòng chọn hình ảnh!", Toast.LENGTH_SHORT).show();
                 }
-
-
+            }
+        });
+        btnPredictSVM.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    btnPredictSVM.setEnabled(false);
+                    new SVMAsynTask().execute(imageString);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Vui lòng chọn hình ảnh!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        btXuLyAnh.setOnClickListener(v -> {
+            try {
+                btXuLyAnh.setEnabled(false);
+                btnPredictSVM.setEnabled(true);
+                btnPredictCNN.setEnabled(true);
+                drawable = (BitmapDrawable) imageView.getDrawable();
+                bitmap = drawable.getBitmap();
+                imageString = getStringImage(bitmap);
+                // hiển thị hình ảnh
+                displayImageByContours(imageString);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this, "Vui lòng chọn hình ảnh!", Toast.LENGTH_SHORT).show();
             }
         });
 
+        //--------
+        CardView back = findViewById(R.id.buttonBack);
+        back.setOnClickListener(v -> {
+            finish();
+        });
+        Source.getInstance().setMainActivity(this);
+        list_images = new ArrayList<>();
+        viewAdapter = new ViewAdapter(list_images, MainActivity.this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        linearLayoutManager.setSmoothScrollbarEnabled(true);
+        rcnn.setLayoutManager(linearLayoutManager);
+        rcnn.setAdapter(viewAdapter);
+        list_images_svm = new ArrayList<>();
+        viewAdapterSVM = new ViewAdapter(list_images_svm,MainActivity.this);
+        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(MainActivity.this);
+        linearLayoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
+        linearLayoutManager1.setSmoothScrollbarEnabled(true);
+        rsvm.setLayoutManager(linearLayoutManager1);
+        rsvm.setAdapter(viewAdapterSVM);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -275,6 +322,8 @@ public class MainActivity extends AppCompatActivity {
                 Uri selectedImageUri = data.getData();
                 urlImage = selectedImageUri;
                 imageView.setImageURI(urlImage);
+                // reset button
+                resetButton();
             }
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_IMG) {
@@ -283,6 +332,8 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 Bitmap bmpCrop = Bitmap.createBitmap(bmp, 165, 485, 850, 245);
                 imageView.setImageBitmap(bmpCrop);
+                // reset button
+                resetButton();
             }
 
 
@@ -295,18 +346,27 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    public void resetButton(){
+        btXuLyAnh.setEnabled(true);
+        btnPredictCNN.setEnabled(false);
+        btnPredictSVM.setEnabled(false);
+    }
+
     private void maping() {
         imageView = findViewById(R.id.img);
         btnCamera = findViewById(R.id.camera);
         btnGallery = findViewById(R.id.gallery);
-        btnPredict = findViewById(R.id.btnPredict);
+        btnPredictCNN = findViewById(R.id.btnPredictCNN);
+        btnPredictSVM = findViewById(R.id.btnPredictSVM);
+        btXuLyAnh = findViewById(R.id.xuLyAnh);
         txtCNN = findViewById(R.id.txtCNN);
         txtSVM = findViewById(R.id.txtSVM);
         progressBar_svm = findViewById(R.id.progress_circular);
         progressBar_cnn = findViewById(R.id.progress_circular1);
         btnDraw = findViewById(R.id.draw);
         resultLayout = findViewById(R.id.result_predict);
-
+        rcnn = findViewById(R.id.rcnn);
+        rsvm = findViewById(R.id.rsvm);
     }
 
     private void openCamera() {
@@ -349,13 +409,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-            String imgString = strings[0];
             String predict = "";
-
-            PyObject obj = pyObject.callAttr("main", imgString);
-
-            predict = obj.toString();
-
+            PyObject obj_cnn = pyAndroid.callAttr("svm", "");
+            predict = obj_cnn.toString();
             return predict;
         }
 
@@ -363,13 +419,17 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             txtSVM.setVisibility(View.GONE);
             progressBar_svm.setVisibility(View.VISIBLE);
+            rsvm.setVisibility(View.GONE);
         }
 
         @Override
         protected void onPostExecute(String s) {
             txtSVM.setVisibility(View.VISIBLE);
             progressBar_svm.setVisibility(View.GONE);
-            txtSVM.setText(s);
+            rsvm.setVisibility(View.VISIBLE);
+            txtSVM.setText("Kết quả: "+s);
+            resultSVM = s;
+            new SVMImageProcessingAsynTask().execute("");
         }
     }
 
@@ -377,33 +437,79 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-            String imgString = strings[0];
             String predict = "";
-
-            PyObject obj_cnn = pyObjectCNN.callAttr("main", imgString);
-
+            PyObject obj_cnn = pyAndroid.callAttr("cnn", "");
             predict = obj_cnn.toString();
-
-
-//            byte data[] = android.util.Base64.decode(str,Base64.DEFAULT);
-//            Bitmap bmp = BitmapFactory.decodeByteArray(data,0,data.length);
-
-//            imageView.setImageBitmap(bmp);
-
             return predict;
         }
 
         @Override
         protected void onPreExecute() {
             txtCNN.setVisibility(View.GONE);
+            rcnn.setVisibility(View.GONE);
             progressBar_cnn.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected void onPostExecute(String s) {
             txtCNN.setVisibility(View.VISIBLE);
+            rcnn.setVisibility(View.VISIBLE);
             progressBar_cnn.setVisibility(View.GONE);
-            txtCNN.setText(s);
+            txtCNN.setText("Kết quả: " + s);
+            result = s;
+            new CNNImageProcessingAsynTask().execute("");
+        }
+    }
+
+    private class CNNImageProcessingAsynTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            PyObject obj_cnn = pyAndroid.callAttr("getImageProcessingCNN", "");
+            return obj_cnn.toString();
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            list_images.clear();
+            String[] array = s.split("ket_noi");
+            for (int i = 0; i < array.length; i++) {
+                byte data[] = android.util.Base64.decode(array[i], Base64.DEFAULT);
+                Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                ObjectResult objectResult = new ObjectResult(bmp, result.charAt(i) + "");
+                list_images.add(objectResult);
+                viewAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    private class SVMImageProcessingAsynTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            PyObject obj_cnn = pyAndroid.callAttr("getImageProcessingCNN", "");
+            return obj_cnn.toString();
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            list_images_svm.clear();
+            String[] array = s.split("ket_noi");
+            for (int i = 0; i < array.length; i++) {
+                byte data[] = android.util.Base64.decode(array[i], Base64.DEFAULT);
+                Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                ObjectResult objectResult = new ObjectResult(bmp, resultSVM.charAt(i) + "");
+                list_images_svm.add(objectResult);
+                viewAdapterSVM.notifyDataSetChanged();
+            }
         }
     }
 
@@ -420,12 +526,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayImageByContours(String image) {
-        PyObject obj_img = pyObjectImage.callAttr("main", image);
+        PyObject obj_img = pyAndroid.callAttr("getImage", image);
         String code = obj_img.toString();
-
         byte data[] = android.util.Base64.decode(code, Base64.DEFAULT);
         Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 
         imageView.setImageBitmap(bmp);
+    }
+
+    public void setResultLayout(LinearLayout resultLayout) {
+        this.resultLayout = resultLayout;
+    }
+
+    public void setToogle(boolean toogle) {
+        this.toogle = toogle;
+    }
+
+    public LinearLayout getResultLayout() {
+        return resultLayout;
+    }
+
+    public boolean isToogle() {
+        return toogle;
     }
 }

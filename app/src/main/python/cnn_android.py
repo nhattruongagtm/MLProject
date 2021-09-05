@@ -1,13 +1,33 @@
+# import thư viện cần dùng
 from PIL import Image
 import base64
 import io
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+import tensorflow as tf
+from tensorflow.keras.models import model_from_json
+from tensorflow.keras.models import load_model
+from os.path import dirname, join
 
+# Load model cnn để sử dụng
+m_json = join(dirname(__file__), "model5.json")
+json_file = open(m_json, 'r')
+loaded_model_json = json_file.read()
+json_file.close()
+loaded_model = model_from_json(loaded_model_json)
+mModel = join(dirname(__file__), "model5.h5")
+loaded_model.load_weights(mModel)
+model = loaded_model
+
+# Ký tự có thể nhận diện
+characters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+                  'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+                  'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+# Các biến được sử dụng                  
 image = None
 sorted_ctrs = None
-
+list_image = None
 
 # Lấy image từ file
 def getImageFromFile(file):
@@ -24,7 +44,7 @@ def getImageFromFile(file):
     return image
 
 # Cho ra sorted_ctrs
-def imageProcessing(image):
+def getSorted_ctrs(image):
     # grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -47,11 +67,11 @@ def imageProcessing(image):
     return sorted_ctrs
 
 # Cho ra hình ảnh đã được vẽ khung bọc
-def main(file):
+def getImage(file):
     global image
     image = getImageFromFile(file)
     global sorted_ctrs
-    sorted_ctrs = imageProcessing(image)
+    sorted_ctrs = getSorted_ctrs(image)
 
     dp = image.copy()
     for i, ctr in enumerate(sorted_ctrs):
@@ -67,26 +87,44 @@ def main(file):
     return str(img_str, 'utf-8')
 
 # Trả về danh sách các hình được cắt nhỏ
-def getImageProcessingCNN(value):
-   
-    global sorted_ctrs
+def getImageProcessingCNN(not_value):
+    result = list()
+    for i in range(len(list_image)):
+        pil_im = Image.fromarray(list_image[i])
+        buff = io.BytesIO()
+        pil_im.save(buff, format="PNG")
+        img_str = base64.b64encode(buff.getvalue())
+        result.append(str(img_str, 'utf-8'))
+    return 'ket_noi'.join(result);
 
-    m = list();
+    
+def cnn(not_value):
+    global list_image
+    global sorted_ctrs
+    list_image = list()
+    pchl = list()
     for i, ctr in enumerate(sorted_ctrs):
         # Get bounding box
         x, y, w, h = cv2.boundingRect(ctr)
         # Getting ROI
-        roi = image[y-10:y+h+10, x-10:x+w+10]
-
+        roi = image[y -20 :y + h + 40 , x - 40:x + w + 40]
         roi = cv2.resize(roi, dsize=(28, 28), interpolation=cv2.INTER_CUBIC)
         roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-
+        list_image.append(roi)
         roi = np.array(roi)
         t = np.copy(roi)
         t = t / 255.0
-        t = 1-t
+        t = 1 - t
         t = t.reshape(1, 784)
-        m.append(roi)
-    return m;
+        pred = model.predict_classes(t)
+        pchl.append(pred)
 
-    
+    pcw = list()
+    for i in range(len(pchl)):
+        pcw.append(characters[pchl[i][0]])
+
+    predstring = ''.join(pcw)
+    return predstring
+
+
+

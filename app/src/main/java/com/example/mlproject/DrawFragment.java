@@ -2,6 +2,8 @@ package com.example.mlproject;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -35,9 +37,7 @@ public class DrawFragment extends Fragment {
     private static final int STORAGE_PERMISSION_CODE = 1;
     private static int default_color = Color.BLACK;
 
-
     public DrawFragment() {
-
     }
 
     @Override
@@ -49,7 +49,7 @@ public class DrawFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_draw,container,false);
+        View view = inflater.inflate(R.layout.fragment_draw, container, false);
 
 
         mapping(view);
@@ -62,7 +62,6 @@ public class DrawFragment extends Fragment {
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 
         paintView.initialise(displayMetrics);
-
 
 
         btnColor.setOnClickListener(new View.OnClickListener() {
@@ -123,15 +122,23 @@ public class DrawFragment extends Fragment {
                 Bitmap bmp = paintView.getBitmap();
                 ImageView imgView = getActivity().findViewById(R.id.img);
                 imgView.setImageBitmap(bmp);
-
-
-
+                // close fragment
+                if (Source.getInstance().getMainActivity() != null) {
+                    Source.getInstance().getMainActivity().resetButton();
+                    Source.getInstance().getMainActivity().getResultLayout().setVisibility(View.VISIBLE);
+                    Source.getInstance().getMainActivity().setToogle(false);
+                    FragmentManager fm = Source.getInstance().getMainActivity().getFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.remove(DrawFragment.this);
+                    ft.commit();
+                }
             }
         });
 
         return view;
     }
-    private void mapping(View view){
+
+    private void mapping(View view) {
         btnUndo = view.findViewById(R.id.undo);
         btnRedo = view.findViewById(R.id.redo);
         btnSave = view.findViewById(R.id.save_img);
@@ -140,7 +147,8 @@ public class DrawFragment extends Fragment {
         btnColor = view.findViewById(R.id.chooseColor);
         btnClear = view.findViewById(R.id.clear);
     }
-    private void requestStoragePermission () {
+
+    private void requestStoragePermission() {
 
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
@@ -152,7 +160,7 @@ public class DrawFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
-                            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+                            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
 
                         }
                     })
@@ -170,7 +178,7 @@ public class DrawFragment extends Fragment {
 
         } else {
 
-            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
 
         }
 
@@ -181,16 +189,16 @@ public class DrawFragment extends Fragment {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == STORAGE_PERMISSION_CODE) {
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(getContext(), "Access granded", Toast.LENGTH_SHORT).show();
-            }
-            else{
+            } else {
                 Toast.makeText(getContext(), "Access denied", Toast.LENGTH_SHORT).show();
             }
 
         }
     }
-    private void openColourPicker(){
+
+    private void openColourPicker() {
         AmbilWarnaDialog ambilWarnaDialog = new AmbilWarnaDialog(getContext(), default_color, new AmbilWarnaDialog.OnAmbilWarnaListener() {
             @Override
             public void onCancel(AmbilWarnaDialog dialog) {

@@ -50,8 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textSize="15sp"
-        android:textColor="#ff7b5c"
-        android:textStyle="bold"
+        android:textColor="#59617c"
         android:text="Đưa chữ cần nhận diện vào vùng được chọn"/>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -72,7 +71,7 @@
                 android:layout_width="62dp"
                 android:layout_height="62dp"
                 android:layout_gravity="center"
-                android:backgroundTint="#6052ff"
+                app:cardBackgroundColor="#56cfdd"
                 app:cardCornerRadius="31dp" >
                 <ImageView
                     android:layout_gravity="center"

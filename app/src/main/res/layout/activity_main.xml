@@ -4,174 +4,332 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2196F3"
-    android:padding="10dp"
     tools:context=".MainActivity">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:background="#003933"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/buttonBack"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="20dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/title">
+
+                <ImageView
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_round_chevron_left_24" />
+            </androidx.cardview.widget.CardView>
+
             <TextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="monospace"
+                android:layout_marginTop="30dp"
                 android:text="Nhận dạng chữ viết tay"
                 android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="22dp" />
-            <ImageView
-                android:id="@+id/img"
-                android:layout_marginTop="30px"
+                android:textColor="#59617c"
+                android:textSize="17dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/c1"
                 android:layout_width="match_parent"
-                android:background="#017167"
-                android:layout_height="450px"/>
+                android:layout_height="450px"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="20dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title">
+
+                <ImageView
+                    android:id="@+id/img"
+                    android:layout_width="match_parent"
+                    android:layout_height="450px"
+                    android:background="#FFFFFF" />
+            </androidx.cardview.widget.CardView>
+
             <LinearLayout
-                android:layout_marginTop="10dp"
-                android:gravity="center"
+                android:id="@+id/linear1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/c1">
+
                 <Button
                     android:id="@+id/camera"
-                    android:layout_gravity="center"
-                    android:text="Chụp ảnh"
-                    android:layout_weight="1"
-                    android:textAllCaps="false"
-                    android:layout_marginRight="5dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:text="Chụp ảnh"
+                    android:textAllCaps="false" />
+
                 <Button
                     android:id="@+id/gallery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Chọn ảnh"
-                    android:layout_weight="1"
-                    android:textAllCaps="false"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_weight="1"
+                    android:text="Chọn ảnh"
+                    android:textAllCaps="false" />
+
                 <Button
                     android:id="@+id/draw"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:text="Vẽ"
-                    android:textAllCaps="false"
-                    android:layout_marginLeft="5dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:text="Vẽ"
+                    android:textAllCaps="false" />
             </LinearLayout>
+
             <Button
-                android:id="@+id/btnPredict"
-                android:layout_marginBottom="30dp"
-                android:layout_gravity="center"
-                android:text="Dự đoán"
-                android:padding="10dp"
-                android:textAllCaps="false"
+                android:enabled="false"
+                android:id="@+id/xuLyAnh"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"
+                android:padding="10dp"
+                android:text="Xử lý ảnh"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@id/linear1" />
+
+            <Button
+                android:enabled="false"
+                android:id="@+id/btnPredictCNN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"
+                android:padding="10dp"
+                android:text="Dự đoán bằng CNN"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@id/xuLyAnh" />
+
+            <Button
+                android:enabled="false"
+                android:id="@+id/btnPredictSVM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="30dp"
+                android:padding="10dp"
+                android:text="Dự đoán bằng SVM"
+                android:textAllCaps="false"
+                app:layout_constraintTop_toBottomOf="@id/btnPredictCNN" />
+
             <LinearLayout
                 android:id="@+id/result_predict"
-                android:visibility="visible"
-                android:layout_marginTop="25dp"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@id/btnPredictSVM">
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:textSize="20dp"
-                        android:textColor="@color/white"
-                        android:text="Suport Vector Machine(SVM):"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
+                    android:paddingBottom="10dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="10dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <TextView
-                        android:id="@+id/txtSVM"
-                        android:paddingLeft="5dp"
-                        android:textSize="30dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:textColor="@color/white"
-                        android:text=""
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <ProgressBar
-                        android:visibility="gone"
-                        android:id="@+id/progress_circular"
-                        android:layout_width="wrap_content"
-                        android:layout_height="60dp"/>
-                    <TextView
-                        android:textSize="20dp"
-                        android:textColor="@color/white"
-                        android:text="Độ chính xác:"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <TextView
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:paddingLeft="5dp"
-                        android:textSize="30dp"
-                        android:textColor="#29E630"
-                        android:text="0%"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_marginTop="50px"
-                    android:orientation="vertical"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/c2"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            app:cardBackgroundColor="#dee2e5"
+                            app:cardCornerRadius="5dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/cnn_icon" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/t1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Convolutional Neural Network"
+                            android:textColor="#59617c"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/c2"
+                            app:layout_constraintStart_toEndOf="@id/c2"
+                            app:layout_constraintTop_toTopOf="@id/c2" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_circular1"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="20dp"
+                            android:indeterminateTint="#56cfdd"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/c2"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/c2" />
+
+                        <TextView
+                            android:id="@+id/txtCNN"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:text="Kết quả: ABCD"
+                            android:textSize="15sp"
+                            android:textColor="#59617c"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/rcnn" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rcnn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:visibility="gone"
+                            app:layout_constraintTop_toBottomOf="@id/c2" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:textSize="20dp"
-                        android:textColor="@color/white"
-                        android:text="Convolutional Neural Network(CNN):"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="20dp"
+                    android:paddingBottom="10dp"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="10dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <TextView
-                        android:visibility="visible"
-                        android:id="@+id/txtCNN"
-                        android:paddingLeft="5dp"
-                        android:textSize="30dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:textColor="@color/white"
-                        android:text=""
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <ProgressBar
-                        android:visibility="gone"
-                        android:id="@+id/progress_circular1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="60dp"/>
-                    <TextView
-                        android:textSize="20dp"
-                        android:textColor="@color/white"
-                        android:text="Độ chính xác:"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                    <TextView
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:paddingLeft="5dp"
-                        android:textSize="30dp"
-                        android:textColor="#29E630"
-                        android:text="0%"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/c3"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            app:cardBackgroundColor="#dee2e5"
+                            app:cardCornerRadius="5dp"
+                            app:cardElevation="0dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/svm_icon" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/t2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="Suport Vector Machine"
+                            android:textColor="#59617c"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@id/c3"
+                            app:layout_constraintStart_toEndOf="@id/c3"
+                            app:layout_constraintTop_toTopOf="@id/c3" />
+
+                        <ProgressBar
+                            android:id="@+id/progress_circular"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="20dp"
+                            android:indeterminateTint="#56cfdd"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@id/c3"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/c3" />
+
+                        <TextView
+                            android:id="@+id/txtSVM"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:text="Kết quả: ABCD"
+                            android:textSize="15sp"
+                            android:textColor="#59617c"
+                            android:visibility="gone"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/rsvm" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rsvm"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:visibility="gone"
+                            app:layout_constraintTop_toBottomOf="@id/c3" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+
             </LinearLayout>
+
             <FrameLayout
                 android:id="@+id/framelayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/btnPredictSVM" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </LinearLayout>

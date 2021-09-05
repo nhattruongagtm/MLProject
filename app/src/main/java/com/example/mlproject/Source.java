@@ -6,17 +6,24 @@ public class Source {
     String data;
     boolean isHaveImage;
 
-    private Source(){
+    private MainActivity mainActivity;
+
+    private Source() {
 
     }
 
-    public static Source getInstance(){
-        if(source == null){
+    public static Source getInstance() {
+        if (source == null) {
             source = new Source();
         }
         return source;
-     }
+    }
 
+    public MainActivity getMainActivity() {
+        return mainActivity;
+    }
 
-
+    public void setMainActivity(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+    }
 }

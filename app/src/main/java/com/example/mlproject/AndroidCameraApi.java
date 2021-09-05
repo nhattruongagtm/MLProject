@@ -91,6 +91,8 @@ public class AndroidCameraApi extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Xóa status bar
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
         setContentView(R.layout.android_camera_api);
         textureView = (TextureView) findViewById(R.id.texture);
         assert textureView != null;
